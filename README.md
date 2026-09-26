@@ -3,13 +3,13 @@
 > De Hayran Andrés López
 
 ## Objetivo
-Implementar las estructuras de datos Stack (pila) y Queue (cola) en Java, utilizando tanto arreglos dinámicos como listas enlazadas, realizando un análisis de complejidad de los métodos asociados.
+Implementar las estructuras de datos `List` (listas enlazadas), `Stack` (pila) y `Queue` (cola) en Java, abarcando tanto arreglos dinámicos como listas enlazadas, realizando un análisis de complejidad de los métodos asociados.
 
 ## Dependencias
-- Java 21 (usado: OpenJDK 21.0.12.1 2026-08-18 LTS)
+- Java 21 (OpenJDK 21.0.12.1 2026-08-18 LTS)
 - XChart 3.8.8
 
-## Interfaces a implementar
+## Estructuras de datos a implementar
 > [!Warning]
 > 
 > _Hemos simplificado los nombres de las estructuras de datos respecto a los usados en la guía. El resto de las especificaciones se conservan._
@@ -21,18 +21,15 @@ Implementar las estructuras de datos Stack (pila) y Queue (cola) en Java, utiliz
    - `DoublyLinkedList`: Lista enlazada doble con puntero a cola
 
 2. Pilas y colas genéricas (`Stack<T>` y `Queue<T>`) basadas en arreglos dinámicos:
-   - `Stack<T>`: Implementación de pila mediante arreglo dinámico
-   - `Queue<T>`: Implementación de cola mediante arreglo dinámico
+   - `Stack<T>`: Pila mediante arreglo dinámico
+   - `Queue<T>`: Cola mediante arreglo dinámico
 
-> [!Note]
->
-> Para los arreglos dinámicos elegiremos duplicación de capacidad en cada reasignación. Análisis explicado más adelante.
+    Para los arreglos dinámicos elegiremos duplicación de capacidad en cada reasignación.
 
-## API de cada punto
+## API de cada estructura
 
 ### Listas enlazadas (todas las variantes)
 ```Java
-// Sujeto a adiciones extras
 public interface LinkedList<T> {
     // Inserta al inicio
     void pushFront(T value); 
@@ -53,6 +50,9 @@ public interface LinkedList<T> {
     void addBefore(Node<T> target, T value);
     // Añade después del elemento dado 
     void addAfter(Node<T> target, T value);
+    
+    // Verifica si la lista está vacía
+    boolean isEmpty();
 }
 ```
 
@@ -97,7 +97,7 @@ class Queue<T> {
 ```
 
 ## Análisis de complejidad y visualización
-1. Hipótesis sobre el rendimiento de cada estructura de datos
+1. Hipótesis sobre el rendimiento de cada estructura de datos (incluyendo reasignación de arreglos dinámicos)
 2. Medidas de tamaño exponencial (10, 100, 1000, ...) para abarcar todas las escalas en todas las estructuras y todos sus métodos
 3. Entradas aleatorias para todos los casos
 4. Gráficas en formato logarítmico con XChart (dependencia en Java)
@@ -106,4 +106,4 @@ class Queue<T> {
 ## Conclusiones e informe
 - Detallar cuando se usa mejor cada estructura y cada implementación
 - Identificar usos reales de pilas y colas
-- Analizar ventahas de desventajas de arreglos dinámicos vs. listas enlazadas en Java
+- Analizar ventajas y desventajas de arreglos dinámicos vs. listas enlazadas en Java
