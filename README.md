@@ -33,7 +33,7 @@ Implementar las estructuras de datos Stack (pila) y Queue (cola) en Java, utiliz
 ### Listas enlazadas (todas las variantes)
 ```Java
 // Sujeto a adiciones extras
-public interface List<T> {
+public interface LinkedList<T> {
     // Inserta al inicio
     void pushFront(T value); 
     // Inserta al final
@@ -45,9 +45,9 @@ public interface List<T> {
     T popBack();
 
     // Busca un elemento por valor. Retorna el nodo que lo contiene
-    Node<T> find(T value);
+    Node<T> find(T target);
     // Elimina el nodo dado. Retorna su éxito o fracaso
-    boolean erase(Node<T> value);
+    boolean erase(Node<T> target);
 
     // Añade antes del elemento dado
     void addBefore(Node<T> target, T value);
@@ -67,7 +67,7 @@ class Stack<T> {
     T peek();
 
     // Elimina la primera aparición del valor. Retorna si lo logró o no
-    boolean delete(T value);
+    boolean delete(T target);
 
     // Verifica si la pila está vacía
     boolean isEmpty();
@@ -87,7 +87,7 @@ class Queue<T> {
     T front();
 
     // Elimina la primera aparición del valor. Retorna si lo logró o no
-    boolean delete(T value);
+    boolean delete(T target);
 
     // Verifica si la cola está vacía
     boolean isEmpty();
