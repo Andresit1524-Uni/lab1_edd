@@ -1,0 +1,141 @@
+abstract class DynamicArray {
+  -size: int = 0
+  -capacity: int = 1
+  -arr: T = (T[]) new Object[1]
+  --
+  #pushFront(value: T): void
+  #pushBack(value: T): void
+  #popFront(): T
+  #popBack(): T
+  #delete(target: T): boolean
+  #isEmpty(): boolean
+  #size(): int
+  #front(): T
+  #back(): T
+  #realloc(): void
+  -shiftForward(): void
+  -shiftBackward(): void
+}
+
+class Queue {
+  +enqueue(value: T): void
+  +dequeue(): T
+  +peek(): T
+  +delete(target: T): boolean
+  +isEmpty(): boolean
+  +size(): int
+}
+
+class Stack {
+  +push(value: T): void
+  +pop(): T
+  +peek(): T
+  +delete(target: T): boolean
+  +isEmpty(): boolean
+  +size(): int
+}
+
+interface ILinkedList {
+  ~pushFront(value: T): void
+  ~pushBack(value: T): void
+  ~popFront(): T
+  ~popBack(): T
+  ~find(target: T): Node<T>
+  ~erase(target: Node<T>): boolean
+  ~addBefore(target: Node<T>, value: T): void
+  ~addAfter(target: Node<T>, value: T): void
+  ~isEmpty(): boolean
+  ~size(): int
+}
+
+class Node {
+  +value: T
+  +next: Node<T>
+  +prev: Node<T>
+  --
+  +Node(value: T)
+}
+
+class DoublyLinkedList {
+  -head: Node<T>
+  -tail: Node<T>
+  -size: int = 0
+  --
+  +pushFront(value: T): void
+  +pushBack(value: T): void
+  +popFront(): T
+  +popBack(): T
+  +find(target: T): Node<T>
+  +erase(target: Node<T>): boolean
+  +addBefore(target: Node<T>, value: T): void
+  +addAfter(target: Node<T>, value: T): void
+  +isEmpty(): boolean
+  +size(): int
+}
+
+class DoublyLinkedListNoTail {
+  -head: Node<T>
+  -size: int = 0
+  --
+  +pushFront(value: T): void
+  +pushBack(value: T): void
+  +popFront(): T
+  +popBack(): T
+  +find(target: T): Node<T>
+  +erase(target: Node<T>): boolean
+  +addBefore(target: Node<T>, value: T): void
+  +addAfter(target: Node<T>, value: T): void
+  +isEmpty(): boolean
+  +size(): int
+}
+
+class LinkedList {
+  -head: Node<T>
+  -tail: Node<T>
+  -size: int = 0
+  --
+  +pushFront(value: T): void
+  +pushBack(value: T): void
+  +popFront(): T
+  +popBack(): T
+  +find(target: T): Node<T>
+  +erase(target: Node<T>): boolean
+  +addBefore(target: Node<T>, value: T): void
+  +addAfter(target: Node<T>, value: T): void
+  +isEmpty(): boolean
+  +size(): int
+}
+
+class LinkedListNoTail {
+  -head: Node<T>
+  -size: int = 0
+  --
+  +pushFront(value: T): void
+  +pushBack(value: T): void
+  +popFront(): T
+  +popBack(): T
+  +find(target: T): Node<T>
+  +erase(target: Node<T>): boolean
+  +addBefore(target: Node<T>, value: T): void
+  +addAfter(target: Node<T>, value: T): void
+  +isEmpty(): boolean
+  +size(): int
+}
+
+class Main {
+  +{static} main(args: String[]): void
+}
+
+Queue --|> DynamicArray
+Stack --|> DynamicArray
+ILinkedList ..> Node
+Node --> Node
+DoublyLinkedList ..|> ILinkedList
+DoublyLinkedList *-- Node
+DoublyLinkedListNoTail ..|> ILinkedList
+DoublyLinkedListNoTail *-- Node
+LinkedList ..|> ILinkedList
+LinkedList *-- Node
+LinkedListNoTail ..|> ILinkedList
+LinkedListNoTail *-- Node
+@enduml
