@@ -2,11 +2,11 @@ package linkedList;
 
 import java.util.Objects;
 
-import linkedList.base.LinkedList;
+import linkedList.base.ILinkedList;
 import linkedList.base.Node;
 
 /** Lista enlazada doble sin puntero de cola */
-public class DoublyLinkedListNoTail<T> implements LinkedList<T> {
+public class DoublyLinkedListNoTail<T> implements ILinkedList<T> {
     /** Cabeza de la lista */
     private Node<T> head;
 
@@ -203,5 +203,10 @@ public class DoublyLinkedListNoTail<T> implements LinkedList<T> {
     @Override
     public boolean isEmpty() {
         return size == 0 && head == null;
+    }
+
+    @Override
+    public int size() {
+        return size;
     }
 }

@@ -47,7 +47,7 @@ public abstract class DynamicArray<T> {
      * @return elemento eliminado
      */
     protected T popFront() {
-        // Vacío
+
         if (isEmpty())
             return null;
 
@@ -63,7 +63,7 @@ public abstract class DynamicArray<T> {
      * @return elemento eliminado
      */
     protected T popBack() {
-        // Vacío
+
         if (isEmpty())
             return null;
 
@@ -120,6 +120,9 @@ public abstract class DynamicArray<T> {
      * @return el primer elemento del arreglo
      */
     protected T front() {
+        if (isEmpty())
+            return null;
+
         return arr[0];
     }
 
@@ -127,6 +130,9 @@ public abstract class DynamicArray<T> {
      * @return el último elemento del arreglo
      */
     protected T back() {
+        if (isEmpty())
+            return null;
+
         return arr[size - 1];
     }
 
@@ -166,5 +172,7 @@ public abstract class DynamicArray<T> {
         for (int i = 0; i < size - 1; i++) {
             arr[i] = arr[i + 1];
         }
+
+        arr[--size] = null;
     }
 }

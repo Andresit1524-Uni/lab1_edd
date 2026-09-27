@@ -11,7 +11,7 @@ public class Queue<T> extends DynamicArray<T> {
      *
      * @param value elemento a añadir
      */
-    public void push(T value) {
+    public void enqueue(T value) {
         pushBack(value);
     }
 
@@ -20,7 +20,7 @@ public class Queue<T> extends DynamicArray<T> {
      *
      * @return elemento eliminado
      */
-    public T pop() {
+    public T dequeue() {
         return popFront();
     }
 

@@ -2,11 +2,11 @@ package linkedList;
 
 import java.util.Objects;
 
-import linkedList.base.LinkedList;
+import linkedList.base.ILinkedList;
 import linkedList.base.Node;
 
 /** Lista enlazada simple sin punteros de cola */
-public class LinkedListNoTail<T> implements LinkedList<T> {
+public class LinkedListNoTail<T> implements ILinkedList<T> {
     /** Cabeza de la lista */
     private Node<T> head;
 
@@ -183,5 +183,10 @@ public class LinkedListNoTail<T> implements LinkedList<T> {
     @Override
     public boolean isEmpty() {
         return size == 0 && head == null;
+    }
+
+    @Override
+    public int size() {
+        return size;
     }
 }
