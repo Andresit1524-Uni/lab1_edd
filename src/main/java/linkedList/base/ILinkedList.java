@@ -1,7 +1,7 @@
 package linkedList.base;
 
 /** Interfaz para listas enlazadas */
-public interface LinkedList<T> {
+public interface ILinkedList<T> {
     /**
      * Inserta un elemento al principio
      *
@@ -68,4 +68,9 @@ public interface LinkedList<T> {
      * @return true si al lista está vacía
      */
     boolean isEmpty();
+
+    /**
+     * @return el tamaño de la lista
+     */
+    int size();
 }

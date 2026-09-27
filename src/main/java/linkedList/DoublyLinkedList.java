@@ -5,7 +5,7 @@ import java.util.Objects;
 import linkedList.base.Node;
 
 /** Lista enlazada doble con puntero de cola */
-public class DoublyLinkedList<T> implements linkedList.base.LinkedList<T> {
+public class DoublyLinkedList<T> implements linkedList.base.ILinkedList<T> {
     /** Cabeza de la lista */
     private Node<T> head;
 
@@ -208,5 +208,10 @@ public class DoublyLinkedList<T> implements linkedList.base.LinkedList<T> {
     @Override
     public boolean isEmpty() {
         return size == 0 && head == null;
+    }
+
+    @Override
+    public int size() {
+        return size;
     }
 }

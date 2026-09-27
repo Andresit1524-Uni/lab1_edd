@@ -5,7 +5,7 @@ import java.util.Objects;
 import linkedList.base.Node;
 
 /** Lista enlazada simple con puntero de cola */
-public class LinkedList<T> implements linkedList.base.LinkedList<T> {
+public class LinkedList<T> implements linkedList.base.ILinkedList<T> {
     /** Cabeza de la lista */
     private Node<T> head;
 
@@ -210,5 +210,10 @@ public class LinkedList<T> implements linkedList.base.LinkedList<T> {
     @Override
     public boolean isEmpty() {
         return size == 0 && head == null;
+    }
+
+    @Override
+    public int size() {
+        return size;
     }
 }
