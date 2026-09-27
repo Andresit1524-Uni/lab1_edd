@@ -17,7 +17,7 @@ public abstract class DynamicArray<T> {
      *
      * @param value valor a insertar
      */
-    public void pushFront(T value) {
+    protected void pushFront(T value) {
         // Reasignación
         if (size == capacity)
             realloc();
@@ -32,7 +32,7 @@ public abstract class DynamicArray<T> {
      *
      * @param value valor a insertar
      */
-    public void pushBack(T value) {
+    protected void pushBack(T value) {
         // Reasignación
         if (size == capacity)
             realloc();
@@ -46,7 +46,7 @@ public abstract class DynamicArray<T> {
      *
      * @return elemento eliminado
      */
-    public T popFront() {
+    protected T popFront() {
         // Vacío
         if (isEmpty())
             return null;
@@ -62,7 +62,7 @@ public abstract class DynamicArray<T> {
      *
      * @return elemento eliminado
      */
-    public T popBack() {
+    protected T popBack() {
         // Vacío
         if (isEmpty())
             return null;
@@ -78,7 +78,7 @@ public abstract class DynamicArray<T> {
      * @param target valor a buscar y eliminar
      * @return true si el valor fue eliminado
      */
-    public boolean delete(T target) {
+    protected boolean delete(T target) {
         int index = -1;
 
         // Búsqueda
@@ -105,15 +105,29 @@ public abstract class DynamicArray<T> {
     /**
      * @return true si la lista está vacía
      */
-    public boolean isEmpty() {
+    protected boolean isEmpty() {
         return size == 0;
     }
 
     /**
      * @return tamaño de la lista
      */
-    public int size() {
+    protected int size() {
         return size;
+    }
+
+    /**
+     * @return el primer elemento del arreglo
+     */
+    protected T front() {
+        return arr[0];
+    }
+
+    /**
+     * @return el último elemento del arreglo
+     */
+    protected T back() {
+        return arr[size - 1];
     }
 
     /**
