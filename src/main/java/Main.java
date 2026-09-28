@@ -26,7 +26,7 @@ public class Main {
     /** Número de ejecuciones preliminares para calentamiento de JVM (JIT) */
     private static final int WARMUP_RUNS = 1;
     /** Número de repeticiones para calcular el promedio por medición */
-    private static final int BENCHMARK_RUNS = 1;
+    private static final int BENCHMARK_RUNS = 5;
 
     public static void main(String[] args) {
         System.out.println("Iniciando suite de benchmarks...");
