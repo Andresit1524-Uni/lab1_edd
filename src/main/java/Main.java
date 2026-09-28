@@ -91,7 +91,7 @@ public class Main {
      * Ejecuta las pruebas de rendimiento para la pila basada en arreglo dinámico.
      */
     private static void benchmarkStack() {
-        String fileName = "Stack_results.csv";
+        String fileName = "data/Stack_results.csv";
         String[] methods = { "push", "pop", "peek", "delete", "isEmpty", "size" };
 
         runStructureBenchmark(fileName, methods, (method, n) -> {
@@ -133,7 +133,7 @@ public class Main {
      * Ejecuta las pruebas de rendimiento para la cola basada en arreglo dinámico.
      */
     private static void benchmarkQueue() {
-        String fileName = "Queue_results.csv";
+        String fileName = "data/Queue_results.csv";
         String[] methods = { "enqueue", "dequeue", "peek", "delete", "isEmpty", "size" };
 
         runStructureBenchmark(fileName, methods, (method, n) -> {
