@@ -123,7 +123,27 @@ class LinkedListNoTail {
 }
 
 class Main {
+  -{static} random: Random = new Random()
+  -{static} SIZES: int = { 10, 100, 1000, 10000, 100000 }
+  -{static} WARMUP_RUNS: int = 1
+  -{static} BENCHMARK_RUNS: int = 1
+  --
   +{static} main(args: String[]): void
+  -{static} runWarmup(): void
+  -{static} benchmarkLinkedList(structName: String, type: int): void
+  -{static} benchmarkStack(): void
+  -{static} benchmarkQueue(): void
+  -{static} runStructureBenchmark(fileName: String, methods: String[], runner: MethodRunner): void
+  -{static} executeLinkedListMethod(list: ILinkedList<Integer>, method: String, targetVal: int): void
+  -{static} writeHeader(writer: PrintWriter): void
+  -{static} createLinkedList(type: int): ILinkedList<Integer>
+  -{static} populateLinkedList(list: ILinkedList<Integer>, n: int): void
+  -{static} populateStack(stack: Stack<Integer>, n: int): void
+  -{static} populateQueue(queue: Queue<Integer>, n: int): void
+}
+
+interface MethodRunner {
+  ~run(method: String, n: int): long
 }
 
 Queue --|> DynamicArray
@@ -138,4 +158,8 @@ LinkedList ..|> ILinkedList
 LinkedList *-- Node
 LinkedListNoTail ..|> ILinkedList
 LinkedListNoTail *-- Node
+Main ..> MethodRunner
+Main ..> ILinkedList
+Main ..> Stack
+Main ..> Queue
 @enduml

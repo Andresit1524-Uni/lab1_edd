@@ -1,4 +1,6 @@
+#import "@preview/lilaq:0.6.0" as lq
 #import "@preview/sourcecraft:0.1.0": *
+
 #show: setup-sourceuml
 
 #set document(
@@ -35,7 +37,9 @@ De aquí parten las clases que si se usan:
 
 El diagrama UML de este proyecto es el siguiente:
 
-#image("assets/uml.png")
+#figure[
+  #image("assets/uml.png")
+]
 
 #pagebreak()
 
@@ -96,19 +100,21 @@ La complejidad de sus operaciones es la siguiente:
 
 #figure[
   #table(
-    columns: 2,
-    [*Operación*], [*Complejidad*],
-    `pushFront`, $O(n)$,
-    `pushBack`, $O(1)$,
-    `popFront`, $O(n)$,
-    `popBack`, $O(1)$,
-    `delete`, $O(n)$,
-    `isEmpty`, $O(1)$,
-    `size`, $O(1)$,
-    `front`, $O(1)$,
-    `back`, $O(1)$,
+    columns: 4,
+    [*Operación*], [*Pila*], [*Cola*], [*Complejidad*],
+    `pushFront`, `-`, `-`, $O(n)$,
+    `pushBack`, `push`, `enqueue`, $O(1)$,
+    `popFront`, `-`, `dequeue`, $O(n)$,
+    `popBack`, `pop`, `-`, $O(1)$,
+    `delete`, `delete`, `delete`, $O(n)$,
+    `isEmpty`, `isEmpty`, `isEmpty`, $O(1)$,
+    `size`, `size`, `size`, $O(1)$,
+    `front`, `-`, `front`, $O(1)$,
+    `back`, `peek`, `-`, $O(1)$,
   )
 ]
+
+Ten en cuenta que se están usando arreglos dinámicos llenados de inicio a fin. Con arreglos circulares se puede lograr más rendimiento, y con arreglos circulares dinámicos (no implementados en este caso) también una capacidad máxima arbitraria.
 
 = Gráficación y resultados empíricos
 Para analizar el comportamiento real de estos métodos utilizaremos medidas basadas en `java.time.Instant` y `java.time.Duration`. El esquema de medición es el siguiente:
@@ -117,12 +123,86 @@ Para analizar el comportamiento real de estos métodos utilizaremos medidas basa
 - Esta medición es por cada método de cada clase implementada
 - Haremos la tabla de tiempos y gráficas para los mismos. Una tabla por cada estructura de datos
 - Las gráficas serán en escala logarítmica para evidenciar todas las escalas adecuadamente. Una gráfica por cada tabla
+- Se usarán *nanosegundos* para las mediciones
+
+== Funcionamiento de la Suite:
+1. *JVM Warmup:* Ejecuta pasadas iniciales descartadas para permitir que la JVM realice optimizaciones JIT.
+2. *Escala Exponencial ($N$):* Evalúa cada método con tamaños $N in {10, 100, 1000, 10000, 100000}$.
+3. *Población con Datos Aleatorios:* Se llenan las estructuras previamente usando valores aleatorios para métodos de eliminación o consulta.
+4. *Archivos CSV Matriciales Separados:* Se genera un archivo `.csv` independiente por cada estructura de datos.
 
 El código para registrar estos tiempos no interfiere con los algoritmos, y se ubica en la clase `Main`. Las gráficas se crean con *lilaq*, una librería de *Typst*, el mismo sistema con el que se ha compilado este PDF. los datos para lograrlo se registrarán en un CSV.
 
 == Listas enlazadas
 
+/// Tabla y gráfica para benchmarks
+#let bench-table-plot(source) = {
+  let data = csv(source)
 
+  columns(2)[
+    #set text(size: 6pt)
+    #table(
+      columns: 6,
+      stroke: 0.7pt,
+      ..data.at(0).map(it => [*#it*]),
+      ..data.slice(1).map(it => (raw(it.at(0)), ..it.slice(1))).flatten(),
+    )
+
+    #colbreak()
+
+    #figure[
+      #lq.diagram(
+        width: 8cm,
+        height: 5cm,
+        xscale: "log",
+        yscale: "log",
+        legend: (position: (100% + .5em, 0%)),
+        xlabel: [Número de operaciones],
+        ylabel: [Tiempo (ns)],
+        ..data
+          .slice(1)
+          .map(it => {
+            let label = it.at(0)
+            let data = it.slice(1).map(i => int(i))
+
+            return lq.plot(
+              lq.logspace(1, 5, num: 5),
+              data,
+              label: label,
+            )
+          }),
+      )
+    ]
+  ]
+}
+
+=== 1. Simples
+#bench-table-plot("../data/LinkedListNoTail_results.csv")
+
+=== 2. Simples (con cola)
+#bench-table-plot("../data/LinkedList_results.csv")
+
+#pagebreak()
+
+=== 3. Dobles
+#bench-table-plot("../data/DoublyLinkedListNoTail_results.csv")
+
+=== 4. Dobles (sin cola)
+#bench-table-plot("../data/DoublyLinkedList_results.csv")
+
+#pagebreak()
+
+== Pilas
+#bench-table-plot("../data/Stack_results.csv")
+
+== Colas
+#bench-table-plot("../data/Queue_results.csv")
+
+#pagebreak()
 
 = Conclusiones
+Hemos hecho un análisis teórico y empírico sobre el funcionamiento de las listas enlazadas en todas sus formas, las pilas y las colas y hecho supuestos en base a su funcionamiento y a análisis simples.
 
+La experimentación demostró que la complejidad de las estructuras de datos coincidió con lo esperado y demostrado a lo largo de este informe, gracias a la implementación y medición hechos en Java.
+
+Estos resultados son esenciales en el manejo real de estructuras de datos, las cuales se usan en todos los casos de uso posibles dentro del software real. Su comprensión nos permitirá elegir la mejor estructura para cada contexto.
