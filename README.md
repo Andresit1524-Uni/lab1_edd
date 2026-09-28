@@ -7,7 +7,9 @@ Implementar las estructuras de datos `List` (listas enlazadas), `Stack` (pila) y
 
 ## Dependencias
 - Java 21 (OpenJDK 21.0.12.1 2026-08-18 LTS)
-- XChart 3.8.8
+- Typst 0.15 o superior (para el informe)
+
+La recomendación es utilizar VSCode con las extensiones necesarias para Java y Typst. El resto es más intuitivo.
 
 ## Estructuras de datos a implementar
 > [!Warning]
@@ -98,9 +100,9 @@ class Queue<T> {
 
 ## Análisis de complejidad y visualización
 1. Hipótesis sobre el rendimiento de cada estructura de datos (incluyendo reasignación de arreglos dinámicos)
-2. Medidas de tamaño exponencial (10, 100, 1000, ...) para abarcar todas las escalas en todas las estructuras y todos sus métodos
+2. Medidas de tamaño exponencial (10, 100, 1000, ...) para abarcar mejor las escalas en todas las estructuras y todos sus métodos
 3. Entradas aleatorias para todos los casos
-4. Gráficas en formato logarítmico con XChart (dependencia en Java)
+4. Gráficas en formato logarítmico con medidas en nanosegundos
 5. Comparativa de métodos equivalentes (un método de cualquier lista vs pila o cola, el más óptimo)
 
 ## Conclusiones e informe
