@@ -1,14 +1,5 @@
-#import "@preview/lilaq:0.6.0" as lq
-#import "@preview/sourcecraft:0.1.0": *
-
-#show: setup-sourceuml
-
-#set document(
-  title: [Implementación y análisis de complejidad de listas, pilas y colas en Java],
-)
-#set text(lang: "es", font: "Ancizar Sans")
-#show raw: set text(font: "Google Sans Code NF")
-#show math.equation: set text(font: "Erewhon Math")
+#import "utils.typ": *
+#show: style
 
 #align(center)[
   #title()
@@ -21,7 +12,11 @@
 Implementar las estructuras de datos `List` (listas enlazadas), `Stack` (pila) y `Queue` (cola) en Java, abarcando tanto arreglos dinámicos como listas enlazadas, realizando un análisis de complejidad de los métodos asociados.
 
 = Explicación de la implementación
-Para la implementación de este ejercicio se ha seguido la siguiente estructura:
+Este trabajo ha sido implementado en el siguiente repo de GitHub:
+
+https://github.com/Andresit1524-Uni/lab1_edd
+
+La implementación se rige por la siguiente estructura:
 
 - Una interfaz `ILinkedList` con los métodos comunes para todas las listas enlazadas (insertar, eliminar, buscar, etc.).
 - Una clase abstracta `DynamicArray` con los métodos de un arreglo dinámico ya implementados. Es abstracta porque no la usaremos directamente.
@@ -33,7 +28,7 @@ De aquí parten las clases que si se usan:
   - `LinkedListNoTail`
   - `DoublyLinkedList`
   - `DoublyLinkedListNoTail`
-- `Stack` y `Queue` para las pilas y colas respectivamente
+- `Stack` y `Queue` para las pilas y colas respectivamente, basados en la clase abstracta `DynamicArray`
 
 El diagrama UML de este proyecto es el siguiente:
 
@@ -116,87 +111,72 @@ La complejidad de sus operaciones es la siguiente:
 
 Ten en cuenta que se están usando arreglos dinámicos llenados de inicio a fin. Con arreglos circulares se puede lograr más rendimiento, y con arreglos circulares dinámicos (no implementados en este caso) también una capacidad máxima arbitraria.
 
-= Gráficación y resultados empíricos
-Para analizar el comportamiento real de estos métodos utilizaremos medidas basadas en `java.time.Instant` y `java.time.Duration`. El esquema de medición es el siguiente:
+== Demostración de que la inserción es $O(1)$
+Como se vió en clase, insertar elementos al final de un arreglo toma un tiempo constante. Tomaré mi versión favorita de la demostración: el costo amortizado. El costo amortizado $c$ de $n$ operaciones es el costo promedio:
 
-- Mediremos el rendimiento con 10, 100, 1000, ..., hasta $10^10$ operaciones
+$
+  c = C/n
+$
+
+El costo individual de añadir un elemento al arreglo depende de si hay capacidad o si debemos reagisnar:
+
+$
+  c_i = 1 + cases(
+    i - 1 & quad "si" i - 1 "es potencia de 2",
+    0 & quad "en otro caso"
+  )
+$
+
+Entonces el costo total $C$ es la suma de los costos individuales:
+
+$
+  C & = sum_(i = 1)^n c_i \
+    & = n + sum_(i = 1)^(floor(log_2(n - 1))) 2^i \
+    & = n + 2^(floor(log_2(n - 1)) + 1) - 1
+$
+
+// TODO: terminar esto
+
+= Gráficación y resultados empíricos
+Para analizar el comportamiento real de estos métodos utilizaremos medidas basadas en `System.nanoTime()`. El esquema de medición es el siguiente:
+
+- Mediremos el rendimiento con 10, 100, 1000, ..., hasta $10^5$ operaciones
 - Esta medición es por cada método de cada clase implementada
 - Haremos la tabla de tiempos y gráficas para los mismos. Una tabla por cada estructura de datos
 - Las gráficas serán en escala logarítmica para evidenciar todas las escalas adecuadamente. Una gráfica por cada tabla
 - Se usarán *nanosegundos* para las mediciones
 
 == Funcionamiento de la Suite:
-1. *JVM Warmup:* Ejecuta pasadas iniciales descartadas para permitir que la JVM realice optimizaciones JIT.
-2. *Escala Exponencial ($N$):* Evalúa cada método con tamaños $N in {10, 100, 1000, 10000, 100000}$.
-3. *Población con Datos Aleatorios:* Se llenan las estructuras previamente usando valores aleatorios para métodos de eliminación o consulta.
-4. *Archivos CSV Matriciales Separados:* Se genera un archivo `.csv` independiente por cada estructura de datos.
+1. *Calentamiento:* Ejecuta pasadas iniciales descartadas para permitir que la JVM realice optimizaciones JIT.
+2. *Escala exponencial:* Evalúa cada método con tamaños $n in {10, 100, 1000, 10000, 100000}$.
+3. *Población con datos aleatorios:* Se llenan las estructuras previamente usando valores aleatorios para métodos de eliminación o consulta.
+4. *Archivos CSV matriciales separados:* Se genera un archivo `.csv` independiente por cada estructura de datos.
 
-El código para registrar estos tiempos no interfiere con los algoritmos, y se ubica en la clase `Main`. Las gráficas se crean con *lilaq*, una librería de *Typst*, el mismo sistema con el que se ha compilado este PDF. los datos para lograrlo se registrarán en un CSV.
+El código para registrar estos tiempos no interfiere con el rendimiento de los algoritmos, y se ubica toda en la clase `Main`. Las gráficas se crean con *lilaq*, una librería de *Typst*, el mismo sistema con el que se ha compilado este PDF. los datos estarán también registrados en un CSV en `data/`.
 
 == Listas enlazadas
 
-/// Tabla y gráfica para benchmarks
-#let bench-table-plot(source) = {
-  let data = csv(source)
-
-  columns(2)[
-    #set text(size: 6pt)
-    #table(
-      columns: 6,
-      stroke: 0.7pt,
-      ..data.at(0).map(it => [*#it*]),
-      ..data.slice(1).map(it => (raw(it.at(0)), ..it.slice(1))).flatten(),
-    )
-
-    #colbreak()
-
-    #figure[
-      #lq.diagram(
-        width: 8cm,
-        height: 5cm,
-        xscale: "log",
-        yscale: "log",
-        legend: (position: (100% + .5em, 0%)),
-        xlabel: [Número de operaciones],
-        ylabel: [Tiempo (ns)],
-        ..data
-          .slice(1)
-          .map(it => {
-            let label = it.at(0)
-            let data = it.slice(1).map(i => int(i))
-
-            return lq.plot(
-              lq.logspace(1, 5, num: 5),
-              data,
-              label: label,
-            )
-          }),
-      )
-    ]
-  ]
-}
-
 === 1. Simples
-#bench-table-plot("../data/LinkedListNoTail_results.csv")
+#benchmark-table-plot("../data/LinkedListNoTail_results.csv")
 
 === 2. Simples (con cola)
-#bench-table-plot("../data/LinkedList_results.csv")
+#benchmark-table-plot("../data/LinkedList_results.csv")
 
 #pagebreak()
 
 === 3. Dobles
-#bench-table-plot("../data/DoublyLinkedListNoTail_results.csv")
+#benchmark-table-plot("../data/DoublyLinkedListNoTail_results.csv")
 
 === 4. Dobles (sin cola)
-#bench-table-plot("../data/DoublyLinkedList_results.csv")
+#benchmark-table-plot("../data/DoublyLinkedList_results.csv")
 
 #pagebreak()
 
 == Pilas
-#bench-table-plot("../data/Stack_results.csv")
+#benchmark-table-plot("../data/Stack_results.csv")
 
 == Colas
-#bench-table-plot("../data/Queue_results.csv")
+#benchmark-table-plot("../data/Queue_results.csv")
 
 #pagebreak()
 
