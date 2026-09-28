@@ -2,10 +2,11 @@ package linkedList;
 
 import java.util.Objects;
 
+import linkedList.base.ILinkedList;
 import linkedList.base.Node;
 
 /** Lista enlazada doble con puntero de cola */
-public class DoublyLinkedList<T> implements linkedList.base.ILinkedList<T> {
+public class DoublyLinkedList<T> implements ILinkedList<T> {
     /** Cabeza de la lista */
     private Node<T> head;
 
