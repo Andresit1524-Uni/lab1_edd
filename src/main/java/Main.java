@@ -24,23 +24,34 @@ public class Main {
     private static final int[] SIZES = { 10, 100, 1000, 10000, 100000 };
 
     /** Número de ejecuciones preliminares para calentamiento de JVM (JIT) */
-    private static final int WARMUP_RUNS = 1;
+    private static final int WARMUP_RUNS = 100;
     /** Número de repeticiones para calcular el promedio por medición */
     private static final int BENCHMARK_RUNS = 1;
 
     public static void main(String[] args) {
         System.out.println("Iniciando suite de benchmarks...");
 
+        System.out.println("Ejecutando calentamiento (Warmup)...");
         runWarmup();
 
         // Benchmarks de listas enlazadas
+        System.out.println("-> Midiendo LinkedListNoTail...");
         benchmarkLinkedList("LinkedListNoTail", 0);
+
+        System.out.println("-> Midiendo LinkedList (con cola)...");
         benchmarkLinkedList("LinkedList", 1);
+
+        System.out.println("-> Midiendo DoublyLinkedListNoTail...");
         benchmarkLinkedList("DoublyLinkedListNoTail", 2);
+
+        System.out.println("-> Midiendo DoublyLinkedList (con cola)...");
         benchmarkLinkedList("DoublyLinkedList", 3);
 
         // Benchmarks de estructuras dinámicas
+        System.out.println("-> Midiendo Stack...");
         benchmarkStack();
+
+        System.out.println("-> Midiendo Queue...");
         benchmarkQueue();
 
         System.out.println("Benchmarks completados con éxito. Archivos CSV generados.");
@@ -73,16 +84,54 @@ public class Main {
 
         runStructureBenchmark(fileName, methods, (method, n) -> {
             ILinkedList<Integer> list = createLinkedList(type);
-            int targetVal = random.nextInt(Math.max(1, n * 2));
 
-            // Los métodos que no sean push exigen listas ya ocupadas
-            if (!method.equals("pushFront") && !method.equals("pushBack")) {
-                populateLinkedList(list, n);
+            // Llenar la lista previa para evaluar métodos sobre tamaño N
+            populateLinkedList(list, n);
+
+            // Pre-buscar nodo fuera de la toma de tiempo para métodos que reciben Node<T>
+            Node<Integer> targetNode = null;
+            int targetVal = random.nextInt(Math.max(1, n));
+            if (method.equals("erase") || method.equals("addBefore") || method.equals("addAfter")) {
+                targetNode = list.find(targetVal);
             }
 
-            // Ejecuta el método y calcula el tiempo
+            // Mide el método en cuestión
             long start = System.nanoTime();
-            executeLinkedListMethod(list, method, targetVal);
+            switch (method) {
+                case "pushFront":
+                    list.pushFront(targetVal);
+                    break;
+                case "pushBack":
+                    list.pushBack(targetVal);
+                    break;
+                case "popFront":
+                    list.popFront();
+                    break;
+                case "popBack":
+                    list.popBack();
+                    break;
+                case "find":
+                    list.find(targetVal);
+                    break;
+                case "erase":
+                    if (targetNode != null)
+                        list.erase(targetNode);
+                    break;
+                case "addBefore":
+                    if (targetNode != null)
+                        list.addBefore(targetNode, -1);
+                    break;
+                case "addAfter":
+                    if (targetNode != null)
+                        list.addAfter(targetNode, -1);
+                    break;
+                case "isEmpty":
+                    list.isEmpty();
+                    break;
+                case "size":
+                    list.size();
+                    break;
+            }
             return System.nanoTime() - start;
         });
     }
@@ -98,12 +147,8 @@ public class Main {
             Stack<Integer> stack = new Stack<>();
             int targetVal = random.nextInt(Math.max(1, n * 2));
 
-            // Cualquier método diferente a apilar exige una pila ya ocupada
-            if (!method.equals("push")) {
-                populateStack(stack, n);
-            }
+            populateStack(stack, n);
 
-            // Ejecuta el método y calcula el tiempo
             long start = System.nanoTime();
             switch (method) {
                 case "push":
@@ -140,12 +185,8 @@ public class Main {
             Queue<Integer> queue = new Queue<>();
             int targetVal = random.nextInt(Math.max(1, n * 2));
 
-            // Cualquier método diferente a encolar requiere una lista ya ocupada
-            if (!method.equals("enqueue")) {
-                populateQueue(queue, n);
-            }
+            populateQueue(queue, n);
 
-            // Ejecuta el método y calcula el tiempo
             long start = System.nanoTime();
             switch (method) {
                 case "enqueue":
@@ -207,54 +248,10 @@ public class Main {
     }
 
     /**
-     * Despacha la llamada al método correspondiente de la lista enlazada.
-     */
-    private static void executeLinkedListMethod(ILinkedList<Integer> list, String method, int targetVal) {
-        switch (method) {
-            case "pushFront":
-                list.pushFront(targetVal);
-                break;
-            case "pushBack":
-                list.pushBack(targetVal);
-                break;
-            case "popFront":
-                list.popFront();
-                break;
-            case "popBack":
-                list.popBack();
-                break;
-            case "find":
-                list.find(targetVal);
-                break;
-            case "erase":
-                Node<Integer> n1 = list.find(targetVal);
-                if (n1 != null)
-                    list.erase(n1);
-                break;
-            case "addBefore":
-                Node<Integer> n2 = list.find(targetVal);
-                if (n2 != null)
-                    list.addBefore(n2, -1);
-                break;
-            case "addAfter":
-                Node<Integer> n3 = list.find(targetVal);
-                if (n3 != null)
-                    list.addAfter(n3, -1);
-                break;
-            case "isEmpty":
-                list.isEmpty();
-                break;
-            case "size":
-                list.size();
-                break;
-        }
-    }
-
-    /**
      * Escribe la cabecera del archivo CSV con las columnas de los tamaños N.
      */
     private static void writeHeader(PrintWriter writer) {
-        writer.print("Method");
+        writer.print("Método");
         for (int n : SIZES) {
             writer.print("," + n);
         }
@@ -282,21 +279,21 @@ public class Main {
     /** Llenado inicial para listas enlazadas */
     private static void populateLinkedList(ILinkedList<Integer> list, int n) {
         for (int i = 0; i < n; i++) {
-            list.pushBack(random.nextInt(n * 2));
+            list.pushBack(i);
         }
     }
 
     /** Llenado inicial para pila */
     private static void populateStack(Stack<Integer> stack, int n) {
         for (int i = 0; i < n; i++) {
-            stack.push(random.nextInt(n * 2));
+            stack.push(i);
         }
     }
 
     /** Llenado inicial para cola */
     private static void populateQueue(Queue<Integer> queue, int n) {
         for (int i = 0; i < n; i++) {
-            queue.enqueue(random.nextInt(n * 2));
+            queue.enqueue(i);
         }
     }
 }
