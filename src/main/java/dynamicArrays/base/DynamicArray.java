@@ -53,7 +53,6 @@ public abstract class DynamicArray<T> {
 
         T deleted = arr[0];
         shiftBackward();
-        arr[--size] = null;
         return deleted;
     }
 
