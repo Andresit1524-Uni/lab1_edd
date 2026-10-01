@@ -1,16 +1,18 @@
 # Implementación y análisis de complejidad de listas, pilas y colas en Java
 
-> De Hayran Andrés López
+> Por Hayran Andrés López
 
 ## Objetivo
 Implementar las estructuras de datos `List` (listas enlazadas), `Stack` (pila) y `Queue` (cola) en Java, abarcando tanto arreglos dinámicos como listas enlazadas, realizando un análisis de complejidad de los métodos asociados.
 
 ## Dependencias
 - Java 21 (OpenJDK 21.0.12.1 2026-08-18 LTS)
-- XChart 3.8.8
+- Typst 0.15 o superior (para el informe)
+
+La recomendación es utilizar VSCode con las extensiones necesarias para Java y Typst. El resto es intuitivo.
 
 ## Estructuras de datos a implementar
-> [!Warning]
+> [!WARNING]
 > 
 > _Hemos simplificado los nombres de las estructuras de datos respecto a los usados en la guía. El resto de las especificaciones se conservan._
 
@@ -24,12 +26,12 @@ Implementar las estructuras de datos `List` (listas enlazadas), `Stack` (pila) y
    - `Stack<T>`: Pila mediante arreglo dinámico
    - `Queue<T>`: Cola mediante arreglo dinámico
 
-    Para los arreglos dinámicos elegiremos duplicación de capacidad en cada reasignación.
+   Para los arreglos dinámicos elegiremos duplicación de capacidad en cada reasignación.
 
 ## API de cada estructura
 
 ### Listas enlazadas (todas las variantes)
-```Java
+```java
 public interface LinkedList<T> {
     // Inserta al inicio
     void pushFront(T value); 
@@ -57,7 +59,7 @@ public interface LinkedList<T> {
 ```
 
 ### Pilas
-```Java
+```java
 class Stack<T> {
     // Inserta un elemento en la cima
     void push(T value);
@@ -77,7 +79,7 @@ class Stack<T> {
 ```
 
 ### Colas
-```Java
+```java
 class Queue<T> {
     // Inserta un elemento al final
     void enqueue(T value);
@@ -97,13 +99,13 @@ class Queue<T> {
 ```
 
 ## Análisis de complejidad y visualización
-1. Hipótesis sobre el rendimiento de cada estructura de datos (incluyendo reasignación de arreglos dinámicos)
-2. Medidas de tamaño exponencial (10, 100, 1000, ...) para abarcar todas las escalas en todas las estructuras y todos sus métodos
-3. Entradas aleatorias para todos los casos
-4. Gráficas en formato logarítmico con XChart (dependencia en Java)
-5. Comparativa de métodos equivalentes (un método de cualquier lista vs pila o cola, el más óptimo)
+1. Hipótesis sobre el rendimiento de cada estructura de datos (incluyendo reasignación de arreglos dinámicos).
+2. Medidas de tamaño exponencial (10, 100, 1000, ...) para abarcar mejor las escalas en todas las estructuras y todos sus métodos.
+3. Entradas aleatorias para todos los casos.
+4. Gráficas en formato logarítmico con medidas en nanosegundos.
+5. Comparativa de métodos equivalentes (un método de cualquier lista vs. pila o cola, el más óptimo).
 
 ## Conclusiones e informe
-- Detallar cuando se usa mejor cada estructura y cada implementación
-- Identificar usos reales de pilas y colas
-- Analizar ventajas y desventajas de arreglos dinámicos vs. listas enlazadas en Java
+- Detallar cuándo se usa mejor cada estructura y cada implementación.
+- Identificar usos reales de pilas y colas.
+- Analizar ventajas y desventajas de arreglos dinámicos vs. listas enlazadas en Java.
