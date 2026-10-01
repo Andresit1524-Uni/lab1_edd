@@ -130,18 +130,29 @@ $
 Entonces el costo total $C$ es la suma de los costos individuales:
 
 $
-  C & = sum_(i = 1)^n c_i \
-    & = n + sum_(i = 1)^(floor(log_2(n - 1))) 2^i \
+  C & = sum_(i = 1)^n c_i = n + sum_(i = 1)^(floor(log_2(n - 1))) 2^i \
     & = n + 2^(floor(log_2(n - 1)) + 1) - 1
 $
 
-// TODO: terminar esto
+Y puesto que $2^(floor(log_2(n - 1)) + 1) <= 2(n - 1) < 2n$ entoces obtenemos la desigualdad:
+
+$
+  C < n + 2n = 3n
+$
+
+Volviendo al costo amortizado obtenemos:
+
+$
+  c = C/n = (3n)/n = 3
+$
+
+El costo está acotado a 3, lo cual es *contante*.
 
 = Gráficación y resultados empíricos
 Para analizar el comportamiento real de estos métodos utilizaremos medidas basadas en `System.nanoTime()`. El esquema de medición es el siguiente:
 
 - Mediremos el rendimiento con 10, 100, 1000, ..., hasta $10^5$ operaciones
-- Esta medición es por cada método de cada clase implementada
+- Esta medición es por cada método de cada clase implementada, en un promedio de varios intentos (`BENCHMARK_RUNS`)
 - Haremos la tabla de tiempos y gráficas para los mismos. Una tabla por cada estructura de datos
 - Las gráficas serán en escala logarítmica para evidenciar todas las escalas adecuadamente. Una gráfica por cada tabla
 - Se usarán *nanosegundos* para las mediciones
@@ -157,28 +168,128 @@ El código para registrar estos tiempos no interfiere con el rendimiento de los 
 == Listas enlazadas
 
 === 1. Simples
-#benchmark-table-plot("../data/LinkedListNoTail_results.csv")
+Los métodos `pushBack`, `popBack`, `find`, `erase` y `addBefore` poseen una complejidad lineal, mientras que el resto son constantes. La falta de puntero de cola hace de las suyas.
 
-=== 2. Simples (con cola)
-#benchmark-table-plot("../data/LinkedList_results.csv")
+#benchmark-table-plot("../data/LinkedListNoTail_results.csv")
 
 #pagebreak()
 
+=== 2. Simples (con cola)
+Aquí `pushBack` se desploma porque el puntero de cola nos permite añadir al instante. El resto de métodos siguen lineales, especialmente `popBack` que nos sigue exigiendo una búsqueda.
+
+#benchmark-table-plot("../data/LinkedList_results.csv")
+
 === 3. Dobles
+Las listas dobles desploman `erase` y `addBefore` porque el recorrido hacia atrás nos ahorra toda la búsqueda. Pero la falta de cola nos obliga a buscar hacia el final por lo que `popBack` vuelve a ser lineal.
+
 #benchmark-table-plot("../data/DoublyLinkedListNoTail_results.csv")
 
-=== 4. Dobles (sin cola)
+=== 4. Dobles (con cola)
+Con los dobles enlaces y el puntero a cola, ahora `popBack` se ejecuta en tiempo constante. El resto de métodos también se vuelven constantes por las razones explicadas arriba.
+
+Es la mejor estructura en rendimiento, exigiendo solo cuando tenemos que buscar un elemento (`find`).
+
 #benchmark-table-plot("../data/DoublyLinkedList_results.csv")
 
 #pagebreak()
 
 == Pilas
+Las pilas exhiben un excelente rendimiento para todas las operaciones... excepto eliminar. Por suerte esta operación *¡no es parte de las pilas!*
+
 #benchmark-table-plot("../data/Stack_results.csv")
 
 == Colas
+Las colas pierden rendimiento en `dequeue` porque implica sacar un elemento del principio y trasladar los demás. Eliminar igualmente es ineficiente, pero también está fuera de las colas.
+
 #benchmark-table-plot("../data/Queue_results.csv")
 
 #pagebreak()
+
+= Discusión
+
+== Complejidades obtenidas
+Estas son las complejidades de los métodos tras el análisis empírico.
+
+#columns(2)[
+  === Listas enlazadas
+
+  #figure[
+    #set text(size: 10pt)
+    #set table.cell(inset: 0.5em)
+
+    #table(
+      columns: 5,
+      [*Operación*], [*Simple*], [*Simple (con cola)*], [*Doble*], [*Doble (con cola)*],
+      `pushFront`, $O(1)$, $O(1)$, $O(1)$, $O(1)$,
+      `pushBack`, $O(n)$, $O(1)$, $O(n)$, $O(1)$,
+      `popFront`, $O(1)$, $O(1)$, $O(1)$, $O(1)$,
+      `popBack`, $O(n)$, $O(n)$, $O(n)$, $O(1)$,
+      `find`, $O(n)$, $O(n)$, $O(n)$, $O(n)$,
+      `erase`, $O(n)$, $O(n)$, $O(1)$, $O(1)$,
+      `addBefore`, $O(n)$, $O(n)$, $O(1)$, $O(1)$,
+      `addAfter`, $O(1)$, $O(1)$, $O(1)$, $O(1)$,
+      `isEmpty`, $O(1)$, $O(1)$, $O(1)$, $O(1)$,
+    )
+  ]
+
+  #colbreak()
+
+  === Pilas y colas
+
+  #figure[
+    #set text(size: 10pt)
+    #set table.cell(inset: 0.5em)
+    #let diff(eq) = text(fill: red.darken(20%), eq)
+
+    #table(
+      columns: 4,
+      [*Operación*], [*Pila*], [*Cola*], [*Complejidad*],
+      `pushFront`, `-`, `-`, $O(n)$,
+      `pushBack`, `push`, `enqueue`, $O(1)$,
+      `popFront`, `-`, `dequeue`, $O(n)$,
+      `popBack`, `pop`, `-`, $O(1)$,
+      `delete`, `delete`, `delete`, $O(n)$,
+      `isEmpty`, `isEmpty`, `isEmpty`, $O(1)$,
+      `size`, `size`, `size`, $O(1)$,
+      `front`, `-`, `front`, $O(1)$,
+      `back`, `peek`, `-`, $O(1)$,
+    )
+  ]
+]
+
+Coincide perfectamente con lo visto en la tabla teórica, lo cual muestra que los métodos se comportaron tal como se esperaba. En algun momento del desarrollo hubo medidas que eran lineales sin razón. La causa era porque había un bucle para llenar las listas de antemano ¡siendo medido dentro de los resultados!. Ya está corregido y ahora los resultados tienen sentido.
+
+== ¿Cuando es mejor cada estructura?
+Las listas enlazadas son utilizadas cuando la estabilidad y la abstracción son claves. Una lista doblemente enlazada, e incluso circular, pueden ser perfectas para almacenar datos de manera fragmentada y en tiempo más uniforme.
+
+Las pilas y colas de arreglos dinámicos se usan cuando el rendimiento es más importante, y por supuesto, también con los casos de uso correspondientes. Un arreglo dinámico circular es la mejor opción para una cola, pero no fue implementado.
+
+Sin embargo, las listas enlazadas pueden no aprovechar la memoria contigua del computador haciendo que el CPU busque a lo bruto los datos sin chance de estimar donde están (los llamados _cache misses_). Además no soportan acceso aleatorio (por índice), por lo que son menos flexibles en manejo.
+
+Los arreglos dinámicos por su parte, pueden no tener garantizado su funcionamiento (porque exigen memoria contigua arbitrariamente grande) lo cual las puede hacer inestables. Además las reasignaciones generan picos en el procesamiento.
+
+== Casos de uso reales
+Las listas enlazadas se pueden usar en contextos donde la POO ya está incluida (aunque no es obligatoria para tener listas enlazadas) o cuando la estabilidad es crítica. Esto incluye:
+
+1. Gestores de memoria (`malloc`) e indexado
+2. Planificadores en kernels
+3. _Object pools_ para reutilización, por ejemplo en videojuegos
+4. Implementar pilas y colas (usos más adelante)
+
+Los arreglos dinámicos suelen ser mucho más flexibles y completos, por lo que se usan en:
+
+1. Algoritmos de ordenamiento y clasificación
+2. Traslado y organización de datos
+3. Soportan estructuras tales como árboles, pilas, colas, etc.
+4. Matrices y tensores
+
+Finalmente las pilas y las colas permiten esquemas de priorización y orden sencillos (LIFO y FIFO) que se usan en:
+
+1. Compiladores, intérpretes, analizadores de sintaxis y validación
+2. Deshacer y rehacer
+3. Gestión de eventos y entradas (_input buffering_ y stacks de navegación)
+4. Buffers de todos los tipos (audio, video, UI, frames, ...)
+
 
 = Conclusiones
 Hemos hecho un análisis teórico y empírico sobre el funcionamiento de las listas enlazadas en todas sus formas, las pilas y las colas y hecho supuestos en base a su funcionamiento y a análisis simples.
