@@ -259,6 +259,36 @@ Estas son las complejidades de los métodos tras el análisis empírico.
 
 Coincide perfectamente con lo visto en la tabla teórica, lo cual muestra que los métodos se comportaron tal como se esperaba. En algun momento del desarrollo hubo medidas que eran lineales sin razón. La causa era porque había un bucle para llenar las listas de antemano ¡siendo medido dentro de los resultados!. Ya está corregido y ahora los resultados tienen sentido.
 
+== Comparación de métodos equivalentes
+Solo se compararán los métodos que estén en todas las estructuras de datos.
+
+=== `LinkedList.pushBack` vs. `Stack.push`
+Ambos añaden un elemento al final. En la lista enlazada es $O(1)$ gracias al puntero de cola (quien no lo tiene es `LinkedListNoTail`). En la pila es igualmente $O(1)$ porque no implica traslado de valores en el arreglo qeu lo implementa.
+
+Sin embargo este método no es adecuado para implementar pilas con listas enlazadas como se explicará más adelante.
+
+=== `LinkedListNoTail.popFront` vs. `Queue.dequeue`
+En todas las listas enlazadas `popFront` es $O(1)$, pero como la cola implementa arreglo no circular, eliminar del principio en `dequeue` exige trasladar los elementos termina degradando el rendimiento a $O(n)$.
+
+La solución es un arreglo dinámico circular, pero la implementación actual solo es dinámico.
+
+=== `DoublyLinkedList.popBack` vs. `Stack.pop`
+El puntero a cola y el doble recorrido logran que eliminar el último elemento sea $O(1)$, mientras que en la pila es tan sencillo como retirar el último elemento porque tampoco no hay traslados.
+
+En una lista enlzada simple requiere $O(n)$ elementos retirar el final porque debemos buscar el penúltimo elemento. Por ello no eran eficientes para pilas. Usar la cabeza o una lista enlazada doble son mejores opciones.
+
+#pagebreak()
+
+=== `DoublyLinkedList.erase` vs. `Stack.delete`
+Esta operación no es estándar de las pilas.
+
+En una lista enlazada soble la referencia al nodo a eliminar reduce la complejidad de eliminar a $O(1)$, aunque buscar la referencia sigue siendo $O(n)$. En las pilas sí es $O(n)$ porque implica trasladar los demás elementos de sitio.
+
+=== `isEmpty` y `size`
+Esto no exige alguna implementación a elegir: en todas es igual. Consisten en verificaciones sencillas o getters para variable.
+
+Todas son $O(1)$.
+
 == ¿Cuando es mejor cada estructura?
 Las listas enlazadas son utilizadas cuando la estabilidad y la abstracción son claves. Una lista doblemente enlazada, e incluso circular, pueden ser perfectas para almacenar datos de manera fragmentada y en tiempo más uniforme.
 
